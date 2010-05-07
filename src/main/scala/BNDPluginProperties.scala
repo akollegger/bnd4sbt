@@ -60,6 +60,9 @@ private[bnd4sbt] trait BNDPluginProperties extends ProjectAccessor {
 
   /** The fileName as part of BNDPlugin.bndOutput. Defaults to projectName-projectVersion.jar. */
   protected def bndFileName = "%s-%s.jar".format(project.name, project.version)
+  
+  /** Tells whether or not dependencies should be included in the generated OSGi bundle. Defaults to false. */
+  protected def bndEmbedDependencies = false
 }
 
 /**

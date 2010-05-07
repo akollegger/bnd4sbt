@@ -10,7 +10,7 @@ package com.weiglewilczek.bnd4sbt
 import aQute.lib.osgi.Builder
 import aQute.lib.osgi.Constants._
 import java.util.Properties
-import sbt.DefaultProject
+import sbt.{DefaultProject, Path, ScalaPaths}
 
 /**
  * This BND plugin for SBT offers the following actions:
@@ -60,8 +60,28 @@ trait BNDPlugin extends DefaultProject with BNDPluginProperties {
     properties.setProperty(PRIVATE_PACKAGE, bndPrivatePackage mkString ",")
     properties.setProperty(EXPORT_PACKAGE, bndExportPackage mkString ",")
     properties.setProperty(IMPORT_PACKAGE, bndImportPackage mkString ",")
-    properties.setProperty(INCLUDE_RESOURCE, bndIncludeResource mkString ",")
+    properties.setProperty(INCLUDE_RESOURCE, getIncludeResources)
+    properties.setProperty(BUNDLE_CLASSPATH, if(bndEmbedDependencies) ".," + bundleClassPath else ".")
     log debug "Using the following properties for BND: %s".format(properties)
     properties
+  }
+  
+   private def allDependencyJars = Path.lazyPathFinder { 
+    topologicalSort.flatMap { 
+      case p: ScalaPaths => p.jarPath.getFiles.map(Path.fromFile); 
+      case _ => Set() 
+    } 
+  }
+
+  private def getEmbeddableDependencies = ((compileClasspath +++ allDependencyJars) ** "*.jar") getPaths
+  private def getEmbeddableDepenenciesAsString = getEmbeddableDependencies mkString "," 
+  private def bundleClassPath = getEmbeddableDependencies.map(path => path substring( path.lastIndexOf(java.io.File.separator) + 1 ) ) mkString ","
+  private def getIncludeResources = {
+    val resourcesToInclude = if(bndEmbedDependencies) {
+      (bndIncludeResource mkString ",") + "," + getEmbeddableDepenenciesAsString
+    } else { 
+      bndIncludeResource mkString "," 
+    }
+    resourcesToInclude
   }
 }

@@ -1,6 +1,7 @@
 import sbt._
+import de.element34.sbteclipsify._
 
-class Project(info: ProjectInfo) extends PluginProject(info) {
+class Project(info: ProjectInfo) extends PluginProject(info) with Eclipsify {
 
   lazy val localMavenRepo = "Local Maven Repository" at "file://%s/.m2/repository".format(Path.userHome)
   lazy val aquteRepo      = "aQute Maven Repository" at "http://www.aqute.biz/repo"

@@ -62,7 +62,7 @@ trait BNDPlugin extends DefaultProject with BNDPluginProperties {
     properties.setProperty(IMPORT_PACKAGE, bndImportPackage mkString ",")
     properties.setProperty(INCLUDE_RESOURCE, getIncludeResources)
     properties.setProperty(BUNDLE_CLASSPATH, if(bndEmbedDependencies) ".," + bundleClassPath else ".")
-    properties.setProperty("-removeheaders", INCLUDE_RESOURCE);
+    properties.setProperty(REMOVEHEADERS, INCLUDE_RESOURCE);
     log debug "Using the following properties for BND: %s".format(properties)
     properties
   }
@@ -77,12 +77,12 @@ trait BNDPlugin extends DefaultProject with BNDPluginProperties {
   private def getEmbeddableDependencies = ((compileClasspath +++ allDependencyJars) ** "*.jar") getPaths
   private def getEmbeddableDepenenciesAsString = getEmbeddableDependencies mkString "," 
   private def bundleClassPath = getEmbeddableDependencies.map(path => path substring( path.lastIndexOf(java.io.File.separator) + 1 ) ) mkString ","
+  private def getMainResourcesAsString = bndIncludeResource mkString ","
   private def getIncludeResources = {
-    val resourcesToInclude = if(bndEmbedDependencies) {
-      (bndIncludeResource mkString ",") + "," + getEmbeddableDepenenciesAsString
+    if(bndEmbedDependencies) {
+      getMainResourcesAsString + "," + getEmbeddableDepenenciesAsString
     } else { 
-      bndIncludeResource mkString "," 
-    }
-    resourcesToInclude
+      getMainResourcesAsString 
+    }    
   }
 }

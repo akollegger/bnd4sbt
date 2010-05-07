@@ -49,8 +49,8 @@ private[bnd4sbt] trait BNDPluginProperties extends ProjectAccessor {
   /** The value for Import-Package. Defaults to "*", i.e. everything is imported. */
   protected def bndImportPackage = Set("*")
 
-  /** The value for Include-Resource. Defaults to the main resources. */
-  protected def bndIncludeResource: Set[String] = Set(project.mainResourcesPath.relativePath)
+  /** The value for Include-Resource. Defaults to the files in the main resources folder */
+  protected def bndIncludeResource: Set[String] = project.mainResourcesPath getPaths
 
   /** The classpath used by BND. Defaults to the mainCompilePath of this project. */
   protected def bndClasspath = project.mainCompilePath

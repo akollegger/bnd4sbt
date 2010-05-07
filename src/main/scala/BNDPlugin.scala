@@ -62,6 +62,7 @@ trait BNDPlugin extends DefaultProject with BNDPluginProperties {
     properties.setProperty(IMPORT_PACKAGE, bndImportPackage mkString ",")
     properties.setProperty(INCLUDE_RESOURCE, getIncludeResources)
     properties.setProperty(BUNDLE_CLASSPATH, if(bndEmbedDependencies) ".," + bundleClassPath else ".")
+    properties.setProperty("-removeheaders", INCLUDE_RESOURCE);
     log debug "Using the following properties for BND: %s".format(properties)
     properties
   }
